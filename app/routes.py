@@ -53,7 +53,7 @@ def get_planets():
 # Get one planet
 @planet_bp.route("/<planet_id>", methods=["GET"])
 def get_one_planet(planet_id):
-    planet = Planet.query.get(planet_id)
+    planet = validate_planet(planet_id)
     return {
             "id": planet.id,
             "name": planet.name,
@@ -62,10 +62,12 @@ def get_one_planet(planet_id):
         }
     
     
+    
+    
 # Update one planet
 @planet_bp.route("/<planet_id>", methods=["PUT"])
 def update_planet(planet_id):
-        planet = Planet.query.get(planet_id)
+        planet = validate_planet(planet_id)
         request_data = request.get_json()
         planet.name = request_data["name"]
         planet.description = request_data["description"]
@@ -79,10 +81,22 @@ def update_planet(planet_id):
 # Delete one planet
 @planet_bp.route("/<planet_id>", methods=["DELETE"])
 def delete_planet(planet_id):
-    planet = Planet.query.get_or_404(planet_id)
+    planet = validate_planet(planet_id)
     
     db.session.delete(planet)
     db.session.commit()
     
     return make_response(f"Planet {planet.name} has been successfully deleted.", 200)
     
+
+def validate_planet(planet_id):
+    try: 
+        planet_id = int(planet_id)
+    except:
+        abort(make_response(f"planet #{planet_id} is not valid", 400))
+        
+    planet = Planet.query.get(planet_id)
+    if not planet:
+        abort(make_response(f"planet #{planet_id} is not found", 404))
+
+    return planet    
