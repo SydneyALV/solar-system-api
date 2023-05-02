@@ -76,3 +76,17 @@ def get_one_planet(planet_id):
         }
     
     
+# Update one planet
+@planet_bp.route("/<planet_id>", methods=["PUT"])
+def update_planet(planet_id):
+        planet = Planet.query.get(planet_id)
+        request_data = request.get_json()
+        planet.name = request_data["name"]
+        planet.description = request_data["description"]
+        planet.moon_count = request_data["moon_count"]
+        
+        db.session.commit()
+        
+        return make_response(f"Planet {planet.name} has been successfully updated.", 200)
+
+
