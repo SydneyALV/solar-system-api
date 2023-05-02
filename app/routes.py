@@ -33,36 +33,22 @@ def handle_planets():
 
     return make_response(f"Planet {new_planet.name} has been successfully created!", 201)
 
-# def handle_planets():
-#     planets_response = []
-    
-#     for planet in planets:
-#         planets_response.append({
-#             "id": planet.id,
-#             "name": planet.name,
-#             "description": planet.description,
-#             "moon count": planet.moon_count
-#         })
-    
-#     return jsonify(planets_response)
-    
-# @planet_bp.route("/<planet_id>", methods=["GET"])
+@planet_bp.route("", methods=["GET"])
+def get_planets():
+    planets_response = []
 
-# def get_one_planet(planet_id):
-    
-#     try:
-#         planet_id = int(planet_id)
-#     except:
-#         abort(400, f"Planet with id {planet_id} not valid id type")
+    planets = Planet.query.all()
 
-#     for planet in planets:
-#         if planet.id == planet_id:
-#             return {
-#             "id": planet.id,
-#             "name": planet.name,
-#             "description": planet.description,
-#             "moon count": planet.moon_count
-#         }
+    for planet in planets:
+        planets_response.append({
+            "id": planet.id,
+            "name": planet.name,
+            "description": planet.description,
+            "moon_count": planet.moon_count
+        }
+        )
+
+    return jsonify(planets_response)
 
 # Get one planet
 @planet_bp.route("/<planet_id>", methods=["GET"])
