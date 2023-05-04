@@ -35,18 +35,25 @@ def handle_planets():
 
 @planet_bp.route("", methods=["GET"])
 def get_planets():
+    name_query = request.args.get("name")
+    moon_query = request.args.get("moon_count")
+    description_query = request.args.get("description")
+
+    if name_query:
+        planets = Planet.query.filter_by(name=name_query)
+    elif moon_query and description_query:
+        planets = Planet.query.filter_by(moon_count=int(moon_query), description=description_query)
+    else:
+        planets = Planet.query.all()
+
     planets_response = []
-
-    planets = Planet.query.all()
-
     for planet in planets:
         planets_response.append({
             "id": planet.id,
             "name": planet.name,
             "description": planet.description,
             "moon_count": planet.moon_count
-        }
-        )
+        })
 
     return jsonify(planets_response)
 
@@ -60,10 +67,7 @@ def get_one_planet(planet_id):
             "description": planet.description,
             "moon count": planet.moon_count
         }
-    
-    
-    
-    
+
 # Update one planet
 @planet_bp.route("/<planet_id>", methods=["PUT"])
 def update_planet(planet_id):
