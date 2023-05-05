@@ -22,11 +22,7 @@ planet_bp = Blueprint("planets", __name__, url_prefix="/planets")
 def handle_planets():
     request_data = request.get_json()
     
-    new_planet = Planet(
-        name = request_data["name"],
-        description = request_data["description"],
-        moon_count = request_data["moon_count"]
-    )
+    new_planet = Planet.get_from_dictionary(request_data)
 
     db.session.add(new_planet)
     db.session.commit()
@@ -48,12 +44,7 @@ def get_planets():
 
     planets_response = []
     for planet in planets:
-        planets_response.append({
-            "id": planet.id,
-            "name": planet.name,
-            "description": planet.description,
-            "moon_count": planet.moon_count
-        })
+        planets_response.append(planet.create_dictionary())
 
     return jsonify(planets_response)
 
@@ -61,12 +52,7 @@ def get_planets():
 @planet_bp.route("/<planet_id>", methods=["GET"])
 def get_one_planet(planet_id):
     planet = validate_planet(planet_id)
-    return {
-            "id": planet.id,
-            "name": planet.name,
-            "description": planet.description,
-            "moon count": planet.moon_count
-        }
+    return planet.create_dictionary(), 200
 
 # Update one planet
 @planet_bp.route("/<planet_id>", methods=["PUT"])
@@ -97,10 +83,10 @@ def validate_planet(planet_id):
     try: 
         planet_id = int(planet_id)
     except:
-        abort(make_response(f"planet #{planet_id} is not valid", 400))
+        abort(make_response({"message": f"planet #{planet_id} is not valid"}, 400))
         
     planet = Planet.query.get(planet_id)
     if not planet:
-        abort(make_response(f"planet #{planet_id} is not found", 404))
+        abort(make_response({"message": f"planet #{planet_id} is not found"}, 404))
 
     return planet    
