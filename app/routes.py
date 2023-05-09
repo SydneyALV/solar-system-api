@@ -107,3 +107,18 @@ def create_moon():
     db.session.commit()
 
     return make_response(f"Moon {new_moon.name} has been successfully created!", 201)
+
+@moon_bp.route("", methods=["GET"])
+def read_moons():
+    moons = Moon.query.all()
+
+    moons_response = []
+    for moon in moons:
+        moons_response.append(
+            {
+            "id": moon.id,
+            "name": moon.name
+            }
+        )
+
+    return jsonify(moons_response)
