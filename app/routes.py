@@ -90,3 +90,5 @@ def validate_planet(planet_id):
         abort(make_response({"message": f"planet #{planet_id} is not found"}, 404))
 
     return planet    
+
+

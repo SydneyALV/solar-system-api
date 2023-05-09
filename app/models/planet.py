@@ -5,6 +5,8 @@ class Planet(db.Model):
     name = db.Column(db.String)
     description = db.Column(db.String)
     moon_count = db.Column(db.Integer)
+    moon = db.relationship("Moon", back_populates="planet")
+    
 
     def create_dictionary(self):
         return {
@@ -22,3 +24,5 @@ class Planet(db.Model):
             moon_count=planet_data["moon_count"]
         )
         return new_planet
+    
+    

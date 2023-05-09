@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 
 
+
 db = SQLAlchemy()
 migrate = Migrate()
 load_dotenv()
@@ -32,6 +33,7 @@ def create_app(test_config=None):
     app.register_blueprint(planet_bp)
 
     from app.models.planet import Planet
+    from app.models.moon import Moon
     
     return app
 
